@@ -864,6 +864,21 @@ class TestFromAtomsCellPbc:
         assert data.cell.shape == (1, 3, 3)
         assert data.pbc.shape == (1, 3)
 
+    def test_left_handed_cell_works(self):
+        """A left-handed cell (negative determinant) is a valid lattice."""
+        from ase.build import bulk, make_supercell
+
+        # Swapping two lattice vectors keeps the crystal but flips the handedness.
+        atoms = make_supercell(bulk("Si", "diamond", a=5.43), np.eye(3)[[1, 0, 2]])
+        assert np.linalg.det(atoms.cell.array) < 0
+        data = AtomicData.from_atoms(atoms, dtype=torch.float64)
+        torch.testing.assert_close(
+            data.cell, torch.from_numpy(atoms.cell.array).unsqueeze(0)
+        )
+        torch.testing.assert_close(
+            data.positions, torch.from_numpy(atoms.get_positions())
+        )
+
 
 # -----------------------------------------------------------------------------
 # from_structure: pymatgen Structure/Molecule conversion

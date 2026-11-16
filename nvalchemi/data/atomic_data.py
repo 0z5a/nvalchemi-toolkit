@@ -915,7 +915,8 @@ class AtomicData(BaseModel, DataMixin):
                 device=device,
                 dtype=dtype,
             )
-            if torch.det(cell.squeeze(0)) <= 0.0:
+            # A left-handed cell has a negative determinant; only zero volume is invalid.
+            if torch.det(cell.squeeze(0)) == 0.0:
                 raise ValueError(
                     "Cell has undefined (zero) lattice vectors. "
                     "Please set the cell for all directions, "

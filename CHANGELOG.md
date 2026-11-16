@@ -80,6 +80,10 @@
   faces in the first integrator step. Ghost selection now canonicalizes
   fractions around the owner's own domain instead of into [0, 1), so the atom
   stays adjacent to its owner for every receiver.
+- `AtomicData.from_atoms` accepts left-handed periodic cells (negative
+  determinant), such as a cell with two lattice vectors swapped or a mirror
+  image. Only a cell with zero volume still raises the "undefined (zero)
+  lattice vectors" error.
 
 ## 0.3.0
 
